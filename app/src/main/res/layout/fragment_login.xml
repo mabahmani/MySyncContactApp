@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/login_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/TextViewBoldLight"
+            android:text="@string/login_with_mobile"
+            android:padding="16dp"
+            />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/login_msg"
+            android:hint="@string/phone_hint"
+            app:startIconDrawable="@drawable/ic_phone_android_black_24dp"
+            app:endIconMode="clear_text"
+            app:counterEnabled="true"
+            app:counterMaxLength="11"
+            app:errorEnabled="true"
+            android:layoutDirection="rtl"
+            android:layout_margin="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/phone_number_hint"
+                android:inputType="phone"
+                android:maxLines="1"
+                style="@style/TextViewUltraLightLight"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/phone"
+            android:layout_margin="16dp"
+            android:padding="16dp"
+            style="@style/TextViewMediumDark"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:icon="@drawable/ic_exit_to_app_black_24dp"
+            app:iconTint="@color/colorPrimaryText"
+            app:iconGravity="textEnd"
+            android:text="ورود به اپ"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

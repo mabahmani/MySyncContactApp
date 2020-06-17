@@ -8,4 +8,44 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="TextViewRegularDark">
+        <item name="fontPath">fonts/IRANSansMobile.ttf</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="TextViewUltraLightDark">
+        <item name="fontPath">fonts/IRANSansMobile_UltraLight.ttf</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="TextViewMediumDark">
+        <item name="fontPath">fonts/IRANSansMobile_Medium.ttf</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="TextViewBoldDark">
+        <item name="fontPath">fonts/IRANSansMobile_Bold.ttf</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="TextViewRegularLight">
+        <item name="fontPath">fonts/IRANSansMobile.ttf</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+    </style>
+
+    <style name="TextViewMediumLight">
+        <item name="fontPath">fonts/IRANSansMobile_Medium.ttf</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+    </style>
+
+    <style name="TextViewBoldLight">
+        <item name="fontPath">fonts/IRANSansMobile_Bold.ttf</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+    </style>
+
+    <style name="TextViewUltraLightLight">
+        <item name="fontPath">fonts/IRANSansMobile_UltraLight.ttf</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+    </style>
+
 </resources>
