@@ -6,4 +6,6 @@
     <string name="phone_hint">موبایل</string>
     <string name="phone_number_hint">09.........</string>
     <string name="login_with_mobile">ورود با شماره موبایل</string>
+    <string name="contacts">مخاطبین</string>
+    <string name="friends">دوستان</string>
 </resources>

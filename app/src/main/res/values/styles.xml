@@ -48,4 +48,9 @@
         <item name="android:textColor">@color/colorSecondaryText</item>
     </style>
 
+
+    <style name="tabs_text_appearance" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="fontPath">fonts/IRANSansMobile.ttf</item>
+    </style>
+
 </resources>
