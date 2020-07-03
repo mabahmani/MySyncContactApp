@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mysynccontactapp">
+
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
     <uses-permission
         android:name="android.permission.INTERNET"/>
     <uses-permission
@@ -47,11 +51,11 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <provider
-            android:name=".synccontacts.ContactProvider"
-            android:authorities="com.example.mysynccontactapp.provider"
-            android:exported="false"
-            android:syncable="true"/>
+<!--        <provider-->
+<!--            android:name=".synccontacts.ContactProvider"-->
+<!--            android:authorities="com.example.mysynccontactapp.provider"-->
+<!--            android:exported="false"-->
+<!--            android:syncable="true"/>-->
     </application>
 
 </manifest>

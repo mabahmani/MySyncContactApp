@@ -20,8 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mysynccontactapp.databinding.FragmentMainBinding;
 
-import static android.content.Context.ACCOUNT_SERVICE;
-
 public class MainFragment extends Fragment {
     private static final String TAG = "MainFragment";
     public static final String AUTHORITY = ContactsContract.AUTHORITY;
@@ -55,44 +53,40 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setTabFont();
 
-        mAccount = createSyncAccount(getContext());
+        mAccount = getOrCreateAccount(getContext());
 
-        mResolver = getActivity().getContentResolver();
-        mResolver.setSyncAutomatically(mAccount, ContactsContract.AUTHORITY, true);
     }
 
 
-    public static Account createSyncAccount(Context context) {
-        // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
-        // Get an instance of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-            Log.d(TAG, "Created new account...");
-            /*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call context.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             */
-        } else {
+    private static Account getOrCreateAccount(Context context) {
 
-            Log.d(TAG, "Failed to create account!");
+        AccountManager accountManager = AccountManager.get(context);
+        Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
+        Account account;
+        if (accounts.length == 0) {
+            account = new Account(context.getString(R.string.app_name), ACCOUNT_TYPE);
 
-            /*
-             * The account exists or some other error occurred. Log this, report it,
-             * or handle it internally.
-             */
+            if (accountManager.addAccountExplicitly(account, null, null)){
+                Log.d(TAG, "Created new account...");
+                ContentResolver.setIsSyncable(account, ContactsContract.AUTHORITY, 1);
+            }
+
+            else {
+                Log.d(TAG, "Failed to create account!");
+            }
         }
 
-        return newAccount;
+        else{
+            Log.d(TAG, "Account (" + accounts[0] + ") Already Exist! ");
+            account = accounts[0];
+        }
+
+        if (account != null && !ContentResolver.getSyncAutomatically(account, ContactsContract.AUTHORITY)) {
+            Log.d(TAG, "ContentResolver:setSyncAutomatically");
+            ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
+        }
+
+        return account;
     }
 
     private void setTabFont() {
