@@ -55,6 +55,11 @@ public class MainFragment extends Fragment {
 
         mAccount = getOrCreateAccount(getContext());
 
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // Performing a sync no matter if it's off
+//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // Performing a sync no matter if it's off
+//        ContentResolver.requestSync(mAccount, ContactsContract.AUTHORITY, bundle);
+
     }
 
 

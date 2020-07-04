@@ -1,14 +1,21 @@
 package com.example.mysynccontactapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -23,6 +30,7 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     @Override
@@ -35,26 +43,52 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final ActivityResultLauncher<String> requestPermissionLauncher =
+                requireActivity().registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean isGranted) {
+                        if (isGranted) {
+
+                        } else {
+                            Toast.makeText(getContext(), "Permission Denied!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            requestPermissionLauncher.launch(
+                    Manifest.permission.READ_CONTACTS);
+        }
 
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phone = binding.phone.getEditText().getText().toString();
 
-                if (phone.isEmpty()) {
-                    binding.phone.setError("شماره موبایل خالی است.");
-                } else if (phone.length() > 11) {
-                    binding.phone.setError("شماره موبایل نمی توانید بیشتر از 11 رقم باشد");
-                } else if (phone.length() < 11) {
-                    binding.phone.setError("شماره موبایل نمی توانید کمتر از 11 رقم باشد");
-                } else if (!phone.startsWith("09")) {
-                    binding.phone.setError("شماره موبایل باید با 09 شروع شود");
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    String phone = binding.phone.getEditText().getText().toString();
+
+                    if (phone.isEmpty()) {
+                        binding.phone.setError("شماره موبایل خالی است.");
+                    } else if (phone.length() > 11) {
+                        binding.phone.setError("شماره موبایل نمی توانید بیشتر از 11 رقم باشد");
+                    } else if (phone.length() < 11) {
+                        binding.phone.setError("شماره موبایل نمی توانید کمتر از 11 رقم باشد");
+                    } else if (!phone.startsWith("09")) {
+                        binding.phone.setError("شماره موبایل باید با 09 شروع شود");
+                    } else {
+                        binding.phone.setError("");
+                        Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+                    }
                 } else {
-                    binding.phone.setError("");
-                    Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+                    requestPermissionLauncher.launch(
+                            Manifest.permission.READ_CONTACTS);
                 }
+
             }
         });
+
 
         binding.phone.getEditText().addTextChangedListener(new TextWatcher() {
             @Override

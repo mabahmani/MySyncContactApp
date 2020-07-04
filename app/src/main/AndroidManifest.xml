@@ -2,17 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mysynccontactapp">
 
-    <uses-permission
-        android:name="android.permission.GET_ACCOUNTS"
-        android:maxSdkVersion="22" />
-    <uses-permission
-        android:name="android.permission.INTERNET"/>
-    <uses-permission
-        android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".MainApplication"
@@ -30,10 +25,9 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".synccontacts.AuthenticatorService">
+        <service android:name=".synccontacts.AuthenticatorService">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
@@ -42,20 +36,20 @@
 
         <service
             android:name=".synccontacts.SyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
+            <meta-data
+                android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
 
-<!--        <provider-->
-<!--            android:name=".synccontacts.ContactProvider"-->
-<!--            android:authorities="com.example.mysynccontactapp.provider"-->
-<!--            android:exported="false"-->
-<!--            android:syncable="true"/>-->
+        <!--        <provider-->
+        <!--            android:name=".synccontacts.ContactProvider"-->
+        <!--            android:authorities="com.example.mysynccontactapp.provider"-->
+        <!--            android:exported="false"-->
+        <!--            android:syncable="true"/>-->
     </application>
 
 </manifest>
