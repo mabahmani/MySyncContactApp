@@ -94,6 +94,7 @@ public class MainFragment extends Fragment {
         return account;
     }
 
+
     private void setTabFont() {
         Typeface fontTypeFace = Typeface.createFromAsset(requireActivity().getAssets(), "fonts/IRANSansMobile.ttf");
 

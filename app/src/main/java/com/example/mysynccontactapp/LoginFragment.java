@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.mysynccontactapp.databinding.FragmentLoginBinding;
-import com.example.mysynccontactapp.retrofit.RetrofitConfig;
 import com.example.mysynccontactapp.retrofit.req.RegisterReqBody;
-import com.example.mysynccontactapp.retrofit.res.RegisterUserResBody;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
@@ -130,27 +123,28 @@ public class LoginFragment extends Fragment {
     }
 
     private void performLoginRequest(RegisterReqBody registerReqBody, final View view) {
+        Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
 
-        Call<RegisterUserResBody> call = RetrofitConfig.getService().registerUser(registerReqBody);
-
-        call.enqueue(new Callback<RegisterUserResBody>() {
-            @Override
-            public void onResponse(Call<RegisterUserResBody> call, Response<RegisterUserResBody> response) {
-                Log.d(TAG, "onResponse: " + response);
-                Log.d(TAG, "onResponse: " + call.request());
-
-                if (response.isSuccessful()){
-                    Log.d(TAG, "onResponse: " + response.body());
-                    binding.phone.setError("");
-                    Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RegisterUserResBody> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.getMessage());
-            }
-        });
+//        Call<RegisterUserResBody> call = RetrofitConfig.getService().registerUser(registerReqBody);
+//
+//        call.enqueue(new Callback<RegisterUserResBody>() {
+//            @Override
+//            public void onResponse(Call<RegisterUserResBody> call, Response<RegisterUserResBody> response) {
+//                Log.d(TAG, "onResponse: " + response);
+//                Log.d(TAG, "onResponse: " + call.request());
+//
+//                if (response.isSuccessful()){
+//                    Log.d(TAG, "onResponse: " + response.body());
+//                    binding.phone.setError("");
+//                    Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RegisterUserResBody> call, Throwable t) {
+//                Log.d(TAG, "onFailure: " + t.getMessage());
+//            }
+//        });
 
     }
 }
