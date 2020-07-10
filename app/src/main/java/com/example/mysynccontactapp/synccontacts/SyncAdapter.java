@@ -14,6 +14,9 @@ import android.util.Log;
 import com.example.mysynccontactapp.retrofit.RetrofitConfig;
 import com.example.mysynccontactapp.retrofit.req.SyncContactReqBody;
 import com.example.mysynccontactapp.retrofit.res.SyncContactResBody;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ import retrofit2.Response;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String TAG = "SyncAdapter";
-
+    private static int count = 0;
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         Log.i(TAG, "SyncAdapter: ");
@@ -39,8 +42,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try (Cursor cursor = getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER}, null ,null, null)) {
             while (cursor != null && cursor.moveToNext()) {
                 if (!TextUtils.isEmpty(cursor.getString(0))) {
-                    results.add(cursor.getString(0));
-                    Log.d(TAG, "getSystemContacts: " + cursor.getString(0));
+                    PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+                    try {
+                        Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(cursor.getString(0),"IR");
+                        Log.d(TAG, "PhoneNumberUtil: " + phoneNumber);
+                        Log.d(TAG, "PhoneNumberUtil:E164: " + phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
+                        results.add(phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
+                    } catch (NumberParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -59,6 +69,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             @Override
             public void onFailure(Call<SyncContactResBody> call, Throwable t) {
                 Log.d(TAG, "onFailure: " + t.getMessage());
+                syncResult.stats.numIoExceptions++;
             }
         });
 

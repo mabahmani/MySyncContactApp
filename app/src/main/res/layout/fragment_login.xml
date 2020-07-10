@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number_hint"
                 android:inputType="phone"
+                android:digits="0123456789"
                 android:maxLines="1"
                 style="@style/TextViewUltraLightLight"
                 />
