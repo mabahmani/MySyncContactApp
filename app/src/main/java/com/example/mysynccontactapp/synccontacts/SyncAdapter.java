@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.mysynccontactapp.db.AppDbHelper;
 import com.example.mysynccontactapp.retrofit.RetrofitConfig;
 import com.example.mysynccontactapp.retrofit.req.SyncContactReqBody;
 import com.example.mysynccontactapp.retrofit.res.SyncContactResBody;
@@ -36,7 +37,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(TAG, "onPerformSync: ");
-
+        AppDbHelper appDbHelper = new AppDbHelper(getContext());
         List<String> results = new ArrayList<>();
 
         try (Cursor cursor = getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER}, null ,null, null)) {
@@ -63,6 +64,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             public void onResponse(Call<SyncContactResBody> call, Response<SyncContactResBody> response) {
                 if (response.isSuccessful()){
                     Log.d(TAG, "onResponse: " + response.body());
+                    appDbHelper.addFriends(response.body() != null ? response.body() : new SyncContactResBody());
                 }
             }
 
