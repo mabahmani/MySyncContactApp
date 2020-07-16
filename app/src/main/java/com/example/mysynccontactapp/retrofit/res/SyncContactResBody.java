@@ -3,6 +3,7 @@ package com.example.mysynccontactapp.retrofit.res;
 import java.util.List;
 
 public class SyncContactResBody {
+    private String msg;
     private int count;
     private List<String> friends;
 
@@ -25,11 +26,19 @@ public class SyncContactResBody {
         this.friends = friends;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
     @Override
     public String toString() {
         return "SyncContactResBody{" +
-                "count=" + count +
+                "msg='" + msg + '\'' +
+                ", count=" + count +
                 ", friends=" + friends +
                 '}';
     }

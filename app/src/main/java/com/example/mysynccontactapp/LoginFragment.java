@@ -1,14 +1,16 @@
 package com.example.mysynccontactapp;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,16 +23,26 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.mysynccontactapp.databinding.FragmentLoginBinding;
+import com.example.mysynccontactapp.retrofit.RetrofitConfig;
 import com.example.mysynccontactapp.retrofit.req.RegisterReqBody;
+import com.example.mysynccontactapp.retrofit.res.RegisterUserResBody;
+import com.example.mysynccontactapp.util.PhoneNumberFormatter;
+
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
     private FragmentLoginBinding binding;
-
+    SharedPreferences sharedPref;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sharedPref = getContext().getSharedPreferences("Main",Context.MODE_PRIVATE);
 
     }
 
@@ -44,23 +56,20 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final ActivityResultLauncher<String> requestPermissionLauncher =
-                requireActivity().registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        final ActivityResultLauncher<String[]> requestPermissionLauncher =
+                requireActivity().registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
                     @Override
-                    public void onActivityResult(Boolean isGranted) {
-                        if (isGranted) {
+                    public void onActivityResult(Map<String, Boolean> result) {
 
-                        } else {
-                            Toast.makeText(getContext(), "Permission Denied!", Toast.LENGTH_LONG).show();
-                        }
                     }
                 });
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
 
         } else {
-            requestPermissionLauncher.launch(
-                    Manifest.permission.READ_CONTACTS);
+            requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS});
         }
 
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -79,13 +88,13 @@ public class LoginFragment extends Fragment {
                     } else if (!phone.startsWith("09")) {
                         binding.phone.setError("شماره موبایل باید با 09 شروع شود");
                     } else {
-                        RegisterReqBody registerReqBody = new RegisterReqBody(binding.phone.getEditText().getText().toString());
-                        performLoginRequest(registerReqBody,v);
 
+                        RegisterReqBody registerReqBody = new RegisterReqBody(PhoneNumberFormatter.getInstance().formatE164(binding.phone.getEditText().getText().toString()));
+                        performLoginRequest(registerReqBody,v);
                     }
                 } else {
-                    requestPermissionLauncher.launch(
-                            Manifest.permission.READ_CONTACTS);
+                    requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS});
+
                 }
 
             }
@@ -123,28 +132,28 @@ public class LoginFragment extends Fragment {
     }
 
     private void performLoginRequest(RegisterReqBody registerReqBody, final View view) {
-        Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+        //Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+        sharedPref.edit().putString("phone",registerReqBody.getUserPhone()).apply();
+        Call<RegisterUserResBody> call = RetrofitConfig.getService().registerUser(registerReqBody);
 
-//        Call<RegisterUserResBody> call = RetrofitConfig.getService().registerUser(registerReqBody);
-//
-//        call.enqueue(new Callback<RegisterUserResBody>() {
-//            @Override
-//            public void onResponse(Call<RegisterUserResBody> call, Response<RegisterUserResBody> response) {
-//                Log.d(TAG, "onResponse: " + response);
-//                Log.d(TAG, "onResponse: " + call.request());
-//
-//                if (response.isSuccessful()){
-//                    Log.d(TAG, "onResponse: " + response.body());
-//                    binding.phone.setError("");
-//                    Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<RegisterUserResBody> call, Throwable t) {
-//                Log.d(TAG, "onFailure: " + t.getMessage());
-//            }
-//        });
+        call.enqueue(new Callback<RegisterUserResBody>() {
+            @Override
+            public void onResponse(Call<RegisterUserResBody> call, Response<RegisterUserResBody> response) {
+                Log.d(TAG, "onResponse: " + response);
+                Log.d(TAG, "onResponse: " + call.request());
+
+                if (response.isSuccessful()){
+                    Log.d(TAG, "onResponse: " + response.body());
+                    binding.phone.setError("");
+                    Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToMainFragment());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterUserResBody> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
 
     }
 }

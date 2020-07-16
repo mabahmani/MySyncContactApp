@@ -2,8 +2,8 @@ package com.example.mysynccontactapp.db;
 
 import android.provider.BaseColumns;
 
-public class AppDdContract {
-    public AppDdContract() {
+public class AppDbContract {
+    public AppDbContract() {
     }
 
     public static class FriendEntry implements BaseColumns {

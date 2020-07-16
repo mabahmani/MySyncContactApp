@@ -9,16 +9,16 @@ import com.example.mysynccontactapp.retrofit.res.SyncContactResBody;
 
 public class AppDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "AppDb.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "AppDb.db";
 
     private static final String SQL_CREATE_FRIEND_ENTRY =
-            "CREATE TABLE " + AppDdContract.FriendEntry.TABLE_NAME + " (" +
-                    AppDdContract.FriendEntry._ID + " INTEGER PRIMARY KEY," +
-                    AppDdContract.FriendEntry.COLUMN_NAME_PHONE + " TEXT UNIQUE)";
+            "CREATE TABLE " + AppDbContract.FriendEntry.TABLE_NAME + " (" +
+                    AppDbContract.FriendEntry._ID + " INTEGER PRIMARY KEY," +
+                    AppDbContract.FriendEntry.COLUMN_NAME_PHONE + " TEXT UNIQUE)";
 
     private static final String SQL_DELETE_FRIEND_ENTRY =
-            "DROP TABLE IF EXISTS " + AppDdContract.FriendEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + AppDbContract.FriendEntry.TABLE_NAME;
     public AppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -39,8 +39,8 @@ public class AppDbHelper extends SQLiteOpenHelper {
 
         for (String friendPhone : syncContactResBody.getFriends()) {
             ContentValues values = new ContentValues();
-            values.put(AppDdContract.FriendEntry.COLUMN_NAME_PHONE, friendPhone);
-            db.insert(AppDdContract.FriendEntry.TABLE_NAME, null, values);
+            values.put(AppDbContract.FriendEntry.COLUMN_NAME_PHONE, friendPhone);
+            db.insert(AppDbContract.FriendEntry.TABLE_NAME, null, values);
         }
     }
 }

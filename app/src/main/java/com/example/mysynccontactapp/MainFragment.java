@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -17,10 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import com.example.mysynccontactapp.databinding.FragmentMainBinding;
+import com.example.mysynccontactapp.db.AppDbContract;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "MainFragment";
     public static final String AUTHORITY = ContactsContract.AUTHORITY;
     // An account type, in the form of a domain name
@@ -110,5 +115,30 @@ public class MainFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.d(TAG, "onCreateLoader: ");
+         final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
+                AppDbContract.FriendEntry.COLUMN_NAME_PHONE,
+        };
+        return new CursorLoader(requireContext(),null,CONTACTS_SUMMARY_PROJECTION,null,null,null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        Log.d(TAG, "onLoadFinished: ");
+        data.moveToFirst();
+        do {
+            Log.d(TAG, "onLoadFinished: " + data.getString(0));
+        }
+        while (data.moveToNext());
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset: ");
     }
 }

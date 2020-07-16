@@ -11,7 +11,7 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
 
-        sSyncAdapter = new SyncAdapter(this, true);
+        sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
     }
 
     @Override
