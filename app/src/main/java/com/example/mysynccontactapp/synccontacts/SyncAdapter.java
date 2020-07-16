@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.example.mysynccontactapp.db.AppDbHelper;
 import com.example.mysynccontactapp.db.ContactDb;
+import com.example.mysynccontactapp.model.SystemContactInfo;
 import com.example.mysynccontactapp.retrofit.RetrofitConfig;
 import com.example.mysynccontactapp.retrofit.req.SyncContactReqBody;
 import com.example.mysynccontactapp.retrofit.res.SyncContactResBody;
@@ -59,12 +60,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             @Override
             public void onResponse(Call<SyncContactResBody> call, Response<SyncContactResBody> response) {
                 if (response.isSuccessful()) {
+                    Account account1 = account;
                     Log.d(TAG, "onResponse: " + response.body());
                     if (response.body().getCount() > 0) {
                         ContactDb contactDb = new ContactDb(getContext());
+                        List<SystemContactInfo> presentNumbers = new ArrayList<>();
+                        List<String> currentAppRegisteredNumbers =contactDb.getAppRawContacts(account);
+
                         for (String friendNUmber : response.body().getFriends()) {
                             Log.d(TAG, "onResponse: " + contactDb.getSystemContactInfo(friendNUmber));
+                            if (contactDb.getSystemContactInfo(friendNUmber) != null){
+                                if(!currentAppRegisteredNumbers.contains(friendNUmber))
+                                    presentNumbers.add(contactDb.getSystemContactInfo(friendNUmber));
+                            }
                         }
+                        contactDb.setRegisteredUsers(account1,presentNumbers);
                     }
                 }
             }
