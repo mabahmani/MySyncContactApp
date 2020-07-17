@@ -74,6 +74,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                     presentNumbers.add(contactDb.getSystemContactInfo(friendNUmber));
                             }
                         }
+                        contactDb.removeDeletedSystemContacts(account);
                         contactDb.setRegisteredUsers(account1,presentNumbers);
                     }
                 }

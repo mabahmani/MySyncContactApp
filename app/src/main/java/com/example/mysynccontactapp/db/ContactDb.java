@@ -76,6 +76,27 @@ public class ContactDb {
         }
         Log.d(TAG, "setRegisteredUsers: ");
     }
+
+
+    public void removeDeletedSystemContacts(Account account){
+        Uri currentContactsUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon()
+                .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, account.name)
+                .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, account.type)
+                .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
+                .build();
+
+        String[] projection = new String[] {BaseColumns._ID, ContactsContract.RawContacts.SYNC1};
+
+        try (Cursor cursor = context.getContentResolver().query(currentContactsUri, projection, ContactsContract.RawContacts.DELETED + " = ?", new String[] {"1"}, null)) {
+            while (cursor != null && cursor.moveToNext()) {
+                long rawContactId = cursor.getLong(0);
+                Log.i(TAG, "Deleting raw contact: " + cursor.getString(1) + ", " + rawContactId);
+
+                context.getContentResolver().delete(currentContactsUri, ContactsContract.RawContacts._ID + " = ?", new String[] {String.valueOf(rawContactId)});
+            }
+        }
+    }
+
     public SystemContactInfo getSystemContactInfo(String e164) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(e164));
         String[] projection = {ContactsContract.PhoneLookup.NUMBER,
@@ -111,6 +132,30 @@ public class ContactDb {
         }
 
         return null;
+    }
+
+    public List<SystemContactInfo> getSystemContacts() {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+        };
+        Cursor numberCursor = null;
+        List<SystemContactInfo> systemContactInfos = new ArrayList<>();
+
+        try {
+            numberCursor = context.getContentResolver().query(uri, projection, null, null, null);
+            while (numberCursor != null && numberCursor.moveToNext()) {
+               numberCursor.getString(0);
+               systemContactInfos.add(new SystemContactInfo(numberCursor.getString(2),numberCursor.getString(1),numberCursor.getLong(0)));
+
+            }
+        } finally {
+            if (numberCursor != null) numberCursor.close();
+        }
+
+        return systemContactInfos;
     }
 
     public List<String> getAppRawContacts(Account account){
