@@ -45,8 +45,7 @@ public class MainFragment extends Fragment {
         setTabFont();
         mAccount = getOrCreateAccount(getContext());
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.fragmentContainer, new SystemContactFragment());
-        transaction.addToBackStack(null);
+        transaction.add(R.id.fragmentContainer, new AppContactFragment(mAccount));
         transaction.commit();
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -54,14 +53,16 @@ public class MainFragment extends Fragment {
                 switch (tab.getPosition()){
                     case 0:
                         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragmentContainer, new SystemContactFragment());
+                        transaction.replace(R.id.fragmentContainer, new AppContactFragment(mAccount));
                         transaction.addToBackStack(null);
                         transaction.commit();
+                        break;
                     case 1:
                         FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
-                        transaction1.replace(R.id.fragmentContainer, new AppContactFragment(mAccount));
+                        transaction1.replace(R.id.fragmentContainer, new SystemContactFragment());
                         transaction1.addToBackStack(null);
                         transaction1.commit();
+                        break;
                 }
             }
 
