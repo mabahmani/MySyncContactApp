@@ -6,33 +6,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.viewpager.widget.ViewPager
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layoutDirection="rtl"
+            app:tabTextAppearance="@style/tabs_text_appearance"
+            >
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layoutDirection="rtl"
-                app:tabTextAppearance="@style/tabs_text_appearance"
-                >
+                android:layout_height="match_parent"
+                android:icon="@drawable/ic_people_black_24dp"
+                android:text="@string/friends"
+                />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:icon="@drawable/ic_people_black_24dp"
-                    android:text="@string/friends"
-                    />
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:icon="@drawable/ic_contacts_black_24dp"
+                android:text="@string/contacts" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:icon="@drawable/ic_contacts_black_24dp"
-                    android:text="@string/contacts" />
+        </com.google.android.material.tabs.TabLayout>
 
-            </com.google.android.material.tabs.TabLayout>
-        </androidx.viewpager.widget.ViewPager>
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

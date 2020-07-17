@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -18,34 +17,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mysynccontactapp.databinding.FragmentMainBinding;
-import com.example.mysynccontactapp.db.AppDbContract;
+import com.google.android.material.tabs.TabLayout;
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainFragment extends Fragment {
     private static final String TAG = "MainFragment";
     public static final String AUTHORITY = ContactsContract.AUTHORITY;
-    // An account type, in the form of a domain name
     public static final String ACCOUNT_TYPE = "com.example.mysynccontactapp";
-    // The account name
     public static final String ACCOUNT = "MySyncContactApp";
-    // Instance fields
+
+
     Account mAccount;
 
-    public static final long SECONDS_PER_MINUTE = 60L;
-    public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
-    public static final long SYNC_INTERVAL =
-            SYNC_INTERVAL_IN_MINUTES *
-                    SECONDS_PER_MINUTE;
-    // Global variables
-    // A content resolver for accessing the provider
-    ContentResolver mResolver;
-
     private FragmentMainBinding binding;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,14 +43,38 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTabFont();
-
         mAccount = getOrCreateAccount(getContext());
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.fragmentContainer, new SystemContactFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0:
+                        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragmentContainer, new SystemContactFragment());
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    case 1:
+                        FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
+                        transaction1.replace(R.id.fragmentContainer, new AppContactFragment(mAccount));
+                        transaction1.addToBackStack(null);
+                        transaction1.commit();
+                }
+            }
 
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // Performing a sync no matter if it's off
-//        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // Performing a sync no matter if it's off
-//        ContentResolver.requestSync(mAccount, ContactsContract.AUTHORITY, bundle);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
 
@@ -115,30 +125,5 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 }
             }
         }
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.d(TAG, "onCreateLoader: ");
-         final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
-                AppDbContract.FriendEntry.COLUMN_NAME_PHONE,
-        };
-        return new CursorLoader(requireContext(),null,CONTACTS_SUMMARY_PROJECTION,null,null,null);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        Log.d(TAG, "onLoadFinished: ");
-        data.moveToFirst();
-        do {
-            Log.d(TAG, "onLoadFinished: " + data.getString(0));
-        }
-        while (data.moveToNext());
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        Log.d(TAG, "onLoaderReset: ");
     }
 }
